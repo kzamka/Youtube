@@ -7,7 +7,7 @@ from aiogram.types import FSInputFile
 from yt_dlp import YoutubeDL
 
 # Твой токен вставлен напрямую (Строка 10)
-BOT_TOKEN = '8928787007:AAGEMfcyBRsRjBjM6P8Xyi6EAcIGsqxv5dI'
+BOT_TOKEN = '8928787007:AAEO_aJiHQmr8fX2zzj_i0kAXYj2EHyvtF4'
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
