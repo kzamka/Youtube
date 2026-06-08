@@ -1,24 +1,22 @@
 import asyncio
 import os
+from aiohttp import web
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.types import FSInputFile
 from yt_dlp import YoutubeDL
 
-# Твой токен вставлен напрямую
+# Твой токен вставлен напрямую (Строка 10)
 BOT_TOKEN = '8928787007:AAGEMfcyBRsRjBjM6P8Xyi6EAcIGsqxv5dI'
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 def download_video(url):
-    """
-    Функция для скачивания видео с помощью yt-dlp.
-    Возвращает имя скачанного файла.
-    """
+    """Функция для скачивания видео"""
     ydl_opts = {
-        'format': 'best', # Выбирает лучшее доступное качество
-        'outtmpl': '%(id)s.%(ext)s', # Формат имени файла
+        'format': 'best',
+        'outtmpl': '%(id)s.%(ext)s',
         'quiet': True,
     }
     with YoutubeDL(ydl_opts) as ydl:
@@ -33,34 +31,39 @@ async def cmd_start(message: types.Message):
 @dp.message()
 async def handle_url(message: types.Message):
     url = message.text
-    
-    # Базовая проверка, что текст похож на ссылку
     if "http" not in url:
         await message.answer("Пожалуйста, отправь корректную ссылку на видео.")
         return
 
-    # Сообщаем пользователю, что процесс пошел
     status_msg = await message.answer("Начинаю загрузку видео. Пожалуйста, подождите...")
 
     try:
-        # Запускаем скачивание в отдельном потоке
         filename = await asyncio.to_thread(download_video, url)
-
-        # Отправляем файл пользователю
         video_file = FSInputFile(filename)
         await message.answer_video(video_file)
-        
-        # Удаляем файл с сервера после отправки, чтобы не забивать память
         os.remove(filename)
-        
-        # Удаляем сообщение "Начинаю загрузку..."
         await status_msg.delete()
-        
     except Exception as e:
-        await message.answer(f"Произошла ошибка при скачивании: проверьте ссылку или попробуйте позже.\nТекст ошибки: {e}")
+        await message.answer(f"Произошла ошибка при скачивании.\nТекст ошибки: {e}")
+
+# --- ФЕЙКОВЫЙ ВЕБ-СЕРВЕР ДЛЯ RENDER ---
+async def handle_web(request):
+    return web.Response(text="Bot is running!")
+
+async def start_web_server():
+    app = web.Application()
+    app.router.add_get('/', handle_web)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    # Render сам задаст нужный порт через переменную PORT
+    port = int(os.environ.get("PORT", 10000))
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+# --------------------------------------
 
 async def main():
-    # Запуск процесса поллинга (ожидания новых сообщений)
+    # Запускаем заглушку одновременно с ботом
+    await start_web_server()
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
