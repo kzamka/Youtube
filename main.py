@@ -13,7 +13,7 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 def download_video(url):
-    """Функция для скачивания видео"""
+    """Функция для скачивания видео5"""
     ydl_opts = {
         'format': 'best',
         'outtmpl': '%(id)s.%(ext)s',
