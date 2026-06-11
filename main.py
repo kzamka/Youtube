@@ -18,11 +18,10 @@ def download_video(url):
         'format': 'best',
         'outtmpl': '%(id)s.%(ext)s',
         'quiet': True,
+        'cookiefile': 'cookiesyou.txt', # <--- ДОБАВЛЯЕМ ЭТУ СТРОЧКУ
     }
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
-        filename = ydl.prepare_filename(info)
-        return filename
 
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
