@@ -17,7 +17,7 @@ def download_video(url):
     ydl_opts = {
         'outtmpl': '%(id)s.%(ext)s',
         'quiet': True,
-        'cookiefile': 'cookiesyou.txt',
+        # 'cookiefile': 'cookiesyou.txt',  <--- ПРОСТО УДАЛЯЕМ ЭТУ СТРОЧКУ
         'noplaylist': True,
     }
     with YoutubeDL(ydl_opts) as ydl:
