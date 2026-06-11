@@ -15,7 +15,6 @@ dp = Dispatcher()
 def download_video(url):
     """Функция для скачивания видео"""
     ydl_opts = {
-        'format': '22/18/best[ext=mp4]/best', # <--- ПОЛНОСТЬЮ ЗАМЕНИЛИ ЭТУ СТРОЧКУ
         'outtmpl': '%(id)s.%(ext)s',
         'quiet': True,
         'cookiefile': 'cookiesyou.txt',
