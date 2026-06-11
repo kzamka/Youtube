@@ -15,18 +15,17 @@ dp = Dispatcher()
 def download_video(url):
     """Функция для скачивания видео"""
     ydl_opts = {
-        'format': 'best',
+        'format': '22/18/best[ext=mp4]/best', # <--- ПОЛНОСТЬЮ ЗАМЕНИЛИ ЭТУ СТРОЧКУ
         'outtmpl': '%(id)s.%(ext)s',
         'quiet': True,
         'cookiefile': 'cookiesyou.txt',
-        'noplaylist': True, # Запрещаем качать плейлисты целиком
+        'noplaylist': True,
     }
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         
-        # Если yt-dlp вернул плейлист (часто бывает в TikTok и Insta)
         if 'entries' in info:
-            info = info['entries'][0] # Берем первое (и единственное) видео из него
+            info = info['entries'][0]
             
         filename = ydl.prepare_filename(info)
         return filename
