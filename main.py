@@ -15,20 +15,22 @@ dp = Dispatcher()
 def download_video(url):
     """Функция для скачивания видео"""
     ydl_opts = {
+        'format': 'best',
         'outtmpl': '%(id)s.%(ext)s',
         'quiet': True,
-        # 'cookiefile': 'cookiesyou.txt',  <--- ПРОСТО УДАЛЯЕМ ЭТУ СТРОЧКУ
-        'noplaylist': True,
+        'cookiefile': 'cookiesyou.txt',
+        'noplaylist': True, # Запрещаем качать плейлисты целиком
     }
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         
+        # Если yt-dlp вернул плейлист (часто бывает в TikTok и Insta)
         if 'entries' in info:
-            info = info['entries'][0]
+            info = info['entries'][0] # Берем первое (и единственное) видео из него
             
         filename = ydl.prepare_filename(info)
         return filename
-
+        
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     await message.answer("Привет! Отправь мне ссылку на видео (YouTube, TikTok, Instagram), и я скачаю его для тебя.")
